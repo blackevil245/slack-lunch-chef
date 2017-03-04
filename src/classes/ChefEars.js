@@ -3,7 +3,7 @@
 const BotKit = require('botkit');
 
 const Bot = BotKit.slackbot({
-  debug: true,
+  debug: false,
   storage: undefined,
 });
 

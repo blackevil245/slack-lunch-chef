@@ -2,6 +2,7 @@
 
 const NLP = require('natural');
 const sentiment = require('sentiment');
+const builtinPhrases = require('./builtin');
 
 function toMaxValue(a, b) {
   return a && a.value > b.value ? a : b;
@@ -12,6 +13,11 @@ module.exports = class ChefBrain {
   constructor() {
     this.classifier = new NLP.LogisticRegressionClassifier();
     this.minConfidence = 0.7;
+
+    console.log('Chef is trying to remember the restaurants around');
+    Object.keys(builtinPhrases).forEach(key => this.teach(key, builtinPhrases[key]));
+    this.think();
+    console.log('Chef has remembered his choice, bring your questions...');
   }
 
   teach(label, phrases) {

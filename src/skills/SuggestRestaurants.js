@@ -1,5 +1,7 @@
 'use strict';
 
+const Restaurant = require('../model/Restaurant');
+
 function randomAnswerTemplate(name, serving) {
 
   const templates = [
@@ -15,7 +17,18 @@ function constructPhrases(data) {
   return data.restaurants.map(restaurant => randomAnswerTemplate(restaurant.name, restaurant.serving));
 }
 
-module.exports = function (skill, info, bot, message) {
+function retrieveAllRestaurant() {
+  return new Promise((resolve, reject) => {
+    Restaurant.find((err, restaurants) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(restaurants);
+    });
+  });
+}
+
+module.exports = (skill, info, bot, message, Brain) => {
 
   const seedData = {
     restaurants: [
@@ -34,7 +47,13 @@ module.exports = function (skill, info, bot, message) {
     ],
   };
 
-  const constructedPhrases = constructPhrases(seedData);
-
-  bot.reply(message, constructedPhrases[Math.floor(Math.random() * (seedData.restaurants.length)) + 0]);
+  retrieveAllRestaurant()
+    .then(restaurants => {
+      console.log('debug', restaurants);
+      return seedData.restaurants.concat(restaurants);
+    })
+    .then(withSeedData => {
+      const constructedPhrases = constructPhrases(seedData);
+      bot.reply(message, constructedPhrases[Math.floor(Math.random() * (seedData.restaurants.length)) + 0]);
+    });
 };
