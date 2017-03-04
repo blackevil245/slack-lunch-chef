@@ -5,7 +5,7 @@ const ChefBrain = require('./src/classes/ChefBrain');
 const ChefEars = require('./src/classes/ChefEars');
 const dbConfig = require('./src/config/db');
 
-const SLACK_TOKEN = require('./.credential').token;
+const SLACK_TOKEN = process.env.SLACK_TOKEN;
 
 const Chef = {
   Brain: new ChefBrain(),

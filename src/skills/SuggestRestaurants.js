@@ -49,7 +49,6 @@ module.exports = (skill, info, bot, message, Brain) => {
 
   retrieveAllRestaurant()
     .then(restaurants => {
-      console.log('debug', restaurants);
       seedData.restaurants = seedData.restaurants.concat(restaurants);
       return seedData;
     })
