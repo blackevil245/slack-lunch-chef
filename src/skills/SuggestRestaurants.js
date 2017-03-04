@@ -50,10 +50,11 @@ module.exports = (skill, info, bot, message, Brain) => {
   retrieveAllRestaurant()
     .then(restaurants => {
       console.log('debug', restaurants);
-      return seedData.restaurants.concat(restaurants);
+      seedData.restaurants = seedData.restaurants.concat(restaurants);
+      return seedData;
     })
     .then(withSeedData => {
-      const constructedPhrases = constructPhrases(seedData);
-      bot.reply(message, constructedPhrases[Math.floor(Math.random() * (seedData.restaurants.length)) + 0]);
+      const constructedPhrases = constructPhrases(withSeedData);
+      bot.reply(message, constructedPhrases[Math.floor(Math.random() * (withSeedData.restaurants.length)) + 0]);
     });
 };
