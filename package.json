@@ -1,0 +1,36 @@
+{
+  "name": "slack-lunch-chef",
+  "version": "0.0.1",
+  "description": "A slack bot that produces lunch options",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blackevil245/slack-lunch-chef.git"
+  },
+  "author": "James Nguyen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blackevil245/slack-lunch-chef/issues"
+  },
+  "homepage": "https://github.com/blackevil245/slack-lunch-chef#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^2.13.1",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.9.2",
+    "eslint-plugin-jsx-a11y": "^1.5.3",
+    "eslint-plugin-react": "^5.2.2",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-mocha": "^4.0.1"
+  },
+  "dependencies": {
+    "botkit": "^0.5.1",
+    "mongoose": "^4.8.5",
+    "natural": "^0.5.0",
+    "sentiment": "^3.0.1"
+  }
+}
