@@ -3,6 +3,7 @@
 const NLP = require('natural');
 const sentiment = require('sentiment');
 const builtinPhrases = require('./builtin');
+const Phrase = require('../model/Phrase');
 
 function toMaxValue(a, b) {
   return a && a.value > b.value ? a : b;
@@ -12,12 +13,28 @@ module.exports = class ChefBrain {
 
   constructor() {
     this.classifier = new NLP.LogisticRegressionClassifier();
-    this.minConfidence = 0.7;
+    this.minConfidence = 0.8;
+  }
 
-    console.log('Chef is trying to remember the restaurants around');
-    Object.keys(builtinPhrases).forEach(key => this.teach(key, builtinPhrases[key]));
-    this.think();
-    console.log('Chef has remembered his choice, bring your questions...');
+  recall() {
+    console.log('Chef is trying to recall the restaurants around');
+
+    return new Promise((resolve, reject) => {
+      Phrase.find((err, dbPhrases) => {
+        if (err) {
+          reject(err);
+        }
+
+        Object.keys(builtinPhrases).forEach(key => {
+          const dbPhrasesMatchingSkill = dbPhrases.filter(item => item.skill === key).map(item => item.phrase);
+          this.teach(key, builtinPhrases[key].concat(dbPhrasesMatchingSkill));
+        });
+
+        this.think();
+        console.log('Chef has recalled the restaurants, bring your questions...');
+        resolve();
+      });
+    });
   }
 
   teach(label, phrases) {
@@ -36,6 +53,21 @@ module.exports = class ChefBrain {
     this.classifier.save(aPath, (err, classifier) => {
     // the classifier is saved to the classifier.json file!
       console.log('Writing: Creating a Classifier file in SRC.');
+    });
+  }
+
+  learnNewPhrase(skill, phrase) {
+    return new Promise((resolve, reject) => {
+      console.log(`Chef will learn new phrase "${phrase}" for the skill ${skill}`);
+      const newPhrase = new Phrase();
+      newPhrase.skill = skill;
+      newPhrase.phrase = phrase;
+      newPhrase.save(error => {
+        if (error) {
+          throw new Error(error);
+        }
+        console.log(`Chef has learned new phrase for skill ${skill}`);
+      });
     });
   }
 

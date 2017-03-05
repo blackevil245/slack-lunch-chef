@@ -10,7 +10,7 @@ module.exports = (skill, info, bot, message, Brain) => {
   };
 
   function askForDishes(convo) {
-    convo.ask('What dish do they have?', [
+    convo.ask('What other dish do they have?', [
       {
         pattern: '^done$',
         callback: function (response, convo) {
@@ -20,6 +20,7 @@ module.exports = (skill, info, bot, message, Brain) => {
           restaurant.serving = newRestaurant.serving;
           restaurant.save(err => {
             if (err) throw Error(err);
+            convo.say('I now remember your new place :) Next time i may suggest it!');
             convo.next();
           });
         },

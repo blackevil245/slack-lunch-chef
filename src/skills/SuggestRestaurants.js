@@ -10,7 +10,7 @@ function randomAnswerTemplate(name, serving) {
   ];
 
   // eslint-disable-next-line
-  return templates[Math.floor(Math.random() * (templates.length - 1)) + 0];
+  return templates[Math.floor(Math.random() * templates.length)];
 }
 
 function constructPhrases(data) {
@@ -54,6 +54,6 @@ module.exports = (skill, info, bot, message, Brain) => {
     })
     .then(withSeedData => {
       const constructedPhrases = constructPhrases(withSeedData);
-      bot.reply(message, constructedPhrases[Math.floor(Math.random() * (withSeedData.restaurants.length)) + 0]);
+      bot.reply(message, constructedPhrases[Math.floor(Math.random() * withSeedData.restaurants.length)]);
     });
 };

@@ -14,4 +14,12 @@ module.exports = {
     'Lunch is very good at',
     'We love',
   ],
+  Greeting: [
+    'Say hello to Chef, who will be our next lunch master',
+    'Nice to meet you',
+    'It\'s good to have you',
+    'Hi',
+    'Good morning',
+    'Good afternoon',
+  ],
 };
