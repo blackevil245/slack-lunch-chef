@@ -29,7 +29,9 @@
     "gulp-mocha": "^4.0.1"
   },
   "dependencies": {
+    "bluebird": "^3.5.0",
     "botkit": "^0.5.1",
+    "lodash": "^4.17.4",
     "mongoose": "^4.8.5",
     "natural": "^0.5.0",
     "sentiment": "^3.0.1"
