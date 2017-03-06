@@ -2,7 +2,7 @@
 
 const NLP = require('natural');
 const sentiment = require('sentiment');
-const builtinPhrases = require('../model/Phrase.builtin');
+const builtinPhrases = require('../seeds/phrase.seed.js');
 const Phrase = require('../model/Phrase');
 
 function toMaxValue(a, b) {
