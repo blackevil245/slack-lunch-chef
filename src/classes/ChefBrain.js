@@ -2,7 +2,7 @@
 
 const NLP = require('natural');
 const sentiment = require('sentiment');
-const builtinPhrases = require('./builtin');
+const builtinPhrases = require('../model/Phrase.builtin');
 const Phrase = require('../model/Phrase');
 
 function toMaxValue(a, b) {
@@ -19,12 +19,8 @@ module.exports = class ChefBrain {
   recall() {
     console.log('Chef is trying to recall the restaurants around');
 
-    return new Promise((resolve, reject) => {
-      Phrase.find((err, dbPhrases) => {
-        if (err) {
-          reject(err);
-        }
-
+    return Phrase.find()
+      .then(dbPhrases => {
         Object.keys(builtinPhrases).forEach(key => {
           const dbPhrasesMatchingSkill = dbPhrases.filter(item => item.skill === key).map(item => item.phrase);
           this.teach(key, builtinPhrases[key].concat(dbPhrasesMatchingSkill));
@@ -32,9 +28,10 @@ module.exports = class ChefBrain {
 
         this.think();
         console.log('Chef has recalled the restaurants, bring your questions...');
-        resolve();
+      })
+      .catch(error => {
+        return Promise.reject(error);
       });
-    });
   }
 
   teach(label, phrases) {
@@ -57,18 +54,17 @@ module.exports = class ChefBrain {
   }
 
   learnNewPhrase(skill, phrase) {
-    return new Promise((resolve, reject) => {
-      console.log(`Chef will learn new phrase "${phrase}" for the skill ${skill}`);
-      const newPhrase = new Phrase();
-      newPhrase.skill = skill;
-      newPhrase.phrase = phrase;
-      newPhrase.save(error => {
-        if (error) {
-          throw new Error(error);
-        }
+    console.log(`Chef will learn new phrase "${phrase}" for the skill ${skill}`);
+    const newPhrase = new Phrase();
+    newPhrase.skill = skill;
+    newPhrase.phrase = phrase;
+    return newPhrase.save()
+      .then(() => {
         console.log(`Chef has learned new phrase for skill ${skill}`);
+      })
+      .catch(error => {
+        return Promise.reject(error);
       });
-    });
   }
 
   interpret(phrase) {
@@ -80,14 +76,18 @@ module.exports = class ChefBrain {
     };
   }
 
-  invoke(skill, info, bot, message) {
-    let skillCode;
+  detectBadWord(message) {
     const senti = sentiment(message.text);
-    if (senti.score !== 0) {
+    if (senti.score < 0) {
       console.log('\n\tSentiment value: ');
       console.dir(senti);
       console.log('\n');
     }
+    return senti;
+  }
+
+  invoke(skill, info, bot, message) {
+    let skillCode;
 
     console.log('Grabbing code for skill: ' + skill);
 
@@ -97,7 +97,7 @@ module.exports = class ChefBrain {
       throw new Error(`The invoked skill ${skill} doesn\'t exist!`);
     }
     console.log('Running skill code for ' + skill + '...');
-    skillCode(skill, info, bot, message, senti);
+    skillCode(skill, info, bot, message, this);
   }
 
 };

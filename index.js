@@ -14,6 +14,7 @@ const Chef = {
 
 // Connect mongoose to Database
 mongoose.connect(dbConfig.connectionUrl);
+mongoose.Promise = require('bluebird');
 
 Chef.Brain.recall()
   .then(done => {
@@ -21,14 +22,26 @@ Chef.Brain.recall()
       .listen()
       .hear('.*', (speech, message) => {
         const interpretation = Chef.Brain.interpret(message.text);
-        console.log(`Chef heard ${message.text}`);
-        console.log(`Chef's interpretation ${JSON.stringify(interpretation)}`);
-        if (interpretation.guess) {
+
+        if (Chef.Brain.detectBadWord(message) < 0) {
+          speech.reply('Using bad words will be a very bad habit!');
+        } else if (interpretation.guess) {
+          console.log(`Chef heard ${message.text}`);
+          console.log(`Chef's interpretation ${JSON.stringify(interpretation)}`);
           console.log('Invoking skill: ', interpretation.guess);
-          Chef.Brain.invoke(interpretation.guess, interpretation, speech, message, Chef.Brain);
-          Chef.Brain.learnNewPhrase(interpretation.guess, message.text);
+
+          if (Chef.Brain.detectBadWord(message) < 0) {
+            speech.reply('Using bad words will be a very bad habit!');
+          } else {
+            Chef.Brain.invoke(interpretation.guess, interpretation, speech, message);
+            Chef.Brain.learnNewPhrase(interpretation.guess, message.text);
+          }
         } else {
           speech.reply(message, 'Hmm... I don\'t have a response what you said... I\'ll save it and try to learn about it later.');
         }
       });
+  })
+  .catch(error => {
+    console.log(error.stack);
+    throw new Error(error);
   });
