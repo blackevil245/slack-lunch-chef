@@ -18,17 +18,21 @@ module.exports = (skill, info, bot, message, Brain) => {
           const restaurant = new Restaurant();
           restaurant.name = newRestaurant.name;
           restaurant.serving = newRestaurant.serving;
-          restaurant.save(err => {
-            if (err) throw Error(err);
-            convo.say('I now remember your new place :) Next time i may suggest it!');
-            convo.next();
-          });
+          restaurant.save()
+            .then(() => {
+              convo.say('I now remember your new place :) Next time i may suggest it!');
+              convo.next();
+            })
+            .catch(err => {
+              convo.say('I\'m sorry something wrong has occured :( Would you might retype it?)!');
+              convo.next();
+            });
         },
       },
       {
         pattern: '.*',
         callback: function (response, convo) {
-          newRestaurant.serving.push(response.text);
+          newRestaurant.serving.push(response.text.toLowerCase());
           askForDishes(convo);
           convo.next();
         },
