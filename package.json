@@ -4,7 +4,6 @@
   "description": "A slack bot that produces lunch options",
   "main": "index.js",
   "scripts": {
-    "test": "gulp test",
     "start": "node index.js"
   },
   "repository": {

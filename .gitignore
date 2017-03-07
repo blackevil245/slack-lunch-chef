@@ -1,2 +1,4 @@
 node_modules
 .git
+rc/classes/classifier.json
+.credential.js
